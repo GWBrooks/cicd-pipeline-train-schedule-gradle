@@ -1,0 +1,34 @@
+plugins {
+  //inlude the nodeJS plugin to execute nodejs and npm tasks
+  id 'com.github.node-gradle.node' version '3.2.1'
+}
+
+node {
+    download = true
+    version = '16.13.0'  // Use a more recent Node.js version compatible with your application
+    npmVersion = '8.1.2' // Use a more recent npm version compatible with your application
+}
+
+//declare a build task
+task build
+
+task zip(type: Zip) {
+    from('.') {
+        include "*"
+        include "bin/**"
+        include "data/**"
+        include "node_modules/**"
+        include "public/**"
+        include "routes/**"
+        include "views/**"
+    }
+    destinationDir(file("dist"))
+    baseName = "trainSchedule"
+}
+
+build.dependsOn zip
+zip.dependsOn npm_build
+build.dependsOn npm_build
+npm_build.dependsOn npmInstall
+npm_build.dependsOn npm_test
+npm_test.dependsOn npmInstall
